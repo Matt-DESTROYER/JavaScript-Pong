@@ -364,7 +364,7 @@ function render() {
 // Game loop
 let previousFrame = Date.now();
 function run() {
-    if (Date.now() - previousFrame > 16) {
+    if (Date.now() - previousFrame > 15) {
         physics();
         render();
         previousFrame = Date.now();
