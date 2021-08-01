@@ -362,9 +362,13 @@ function render() {
 }
 
 // Game loop
+let previousFrame = Date.now();
 function run() {
-    physics();
-    render();
+    if (Date.now() - previousFrame > 16) {
+        physics();
+        render();
+        previousFrame = Date.now();
+    }
 
     // Repeat
     window.requestAnimationFrame(run);
