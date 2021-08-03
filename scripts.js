@@ -194,17 +194,12 @@ function moveEnemy(distance) {
 
 // Detect if rectangle is touching ball
 function rectTouchingBall(x, y, w, h) {
-    const x2 = x + w, y2 = y + h;
-    if (ballX - 8 >= x && ballY - 8 >= y && ballX - 8 <= x2 && ballY - 8 <= y2) {
-        return true;
-    } else if (ballX + 8 >= x && ballY - 8 >= y && ballX + 8 <= x2 && ballY - 8 <= y2) {
-        return true;
-    } else if (ballX - 8 >= x && ballY + 8 >= y && ballX - 8 <= x2 && ballY + 8 <= y2) {
-        return true;
-    } else if (ballX + 8 >= x && ballY + 8 >= y && ballX + 8 <= x2 && ballY + 8 <= y2) {
-        return true;
-    }
-    return false;
+    const x2 = x + w,
+	  y2 = y + h;
+    return ballX - 8 >= x && ballY - 8 >= y && ballX - 8 <= x2 && ballY - 8 <= y2
+	|| ballX + 8 >= x && ballY - 8 >= y && ballX + 8 <= x2 && ballY - 8 <= y2
+	|| ballX - 8 >= x && ballY + 8 >= y && ballX - 8 <= x2 && ballY + 8 <= y2
+	|| ballX + 8 >= x && ballY + 8 >= y && ballX + 8 <= x2 && ballY + 8 <= y2;
 }
 
 // Enemy AI
