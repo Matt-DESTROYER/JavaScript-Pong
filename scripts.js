@@ -212,11 +212,13 @@ function rectTouchingBall(x, y, w, h) {
 
 // Enemy AI
 function enemyAI() {
-    if (ballY > enemyY + 25) {
-        moveEnemy(-3);
-    } else if (ballY < enemyY - 25) {
-        moveEnemy(3);
-    }
+	if (ballXdir > 0) {
+		if (ballY > enemyY + 25) {
+			moveEnemy(-3);
+		} else if (ballY < enemyY - 25) {
+			moveEnemy(3);
+		}
+	}
 }
 
 // Physics
@@ -364,6 +366,7 @@ function render() {
 // Game loop
 let previousFrame = Date.now();
 function run() {
+    // Prevent the game from running too fast
     if (Date.now() - previousFrame > 15) {
         physics();
         render();
