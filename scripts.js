@@ -211,9 +211,9 @@ function rectTouchingBall(x, y, w, h) {
 function enemyAI() {
 	if (ballXdir > 0) {
 		if (ballY > enemyY + 25) {
-			moveEnemy(-3.25);
+			moveEnemy(-3.5);
 		} else if (ballY < enemyY - 25) {
-			moveEnemy(3.25);
+			moveEnemy(3.5);
 		}
 	}
 }
