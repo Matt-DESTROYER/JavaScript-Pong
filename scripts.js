@@ -33,7 +33,6 @@ let enemyDir = 0;
 
 // Random number generation
 function randomInt(min = 1, max = 100) {
-    max++;
     return Math.floor(Math.random() * (max - min)) + min;
 }
 
