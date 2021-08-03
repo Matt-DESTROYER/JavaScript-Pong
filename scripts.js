@@ -1,12 +1,10 @@
 // vs computer or another player
-let computer;
+let computer = window.confirm("Press 'Ok' to play against the computer. Press cancel to play against a friend.");
 
-if (window.confirm("Press 'Ok' to play against the computer. Press cancel to play against a friend.")) {
-    alert("W and S or up and down arrow keys to move your paddle.");
-    computer = true;
+if (computer) {
+    alert("Use the W and S keys or up and down arrow keys to move your paddle.");
 } else {
-    alert("Player1 W and S to move your paddle, Player2 up and down arrow keys to move your paddle.");
-    computer = false;
+    alert("Player1 use the W and S keys to move your paddle, Player2 use the up and down arrow keys to move your paddle.");
 }
 
 // Setup canvas
