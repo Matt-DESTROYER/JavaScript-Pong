@@ -45,7 +45,6 @@ if (ballYdir === 0) {
 function reset() {
 	ballX = Math.round(canvas.width / 2);
 	ballY = Math.round(canvas.height / 2);
-	ballXdir, ballYdir;
 	paddleX = 75;
 	paddleY = Math.round(canvas.height / 2);
 	paddleDir = 0;
