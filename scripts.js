@@ -11,8 +11,7 @@ const ctx = canvas.getContext("2d");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 // Setup variables
-let playerScore = 0,
-	computerScore = 0;
+let playerScore = 0, computerScore = 0;
 let level = 1;
 let ballX = Math.round(canvas.width / 2);
 let ballY = Math.round(canvas.height / 2);
@@ -24,6 +23,8 @@ let paddleDir = 0;
 let enemyX = canvas.width - 75;
 let enemyY = Math.round(canvas.height / 2);
 let enemyDir = 0;
+// Setup font
+ctx.font = "20px Georgia";
 // Random number generation
 function randomInt(min = 1, max = 100) {
 	return Math.floor(Math.random() * (max - min)) + min;
@@ -300,7 +301,6 @@ function render() {
 	// Render enemy's paddle
 	ctx.rect(enemyX - 15, enemyY - 50, 30, 100);
 	// Render score counters
-	ctx.font = "20px Georgia";
 	if (computer) {
 		ctx.fillText("Your score: " + playerScore + " Computer's score: " + computerScore, 10, 25);
 	} else {
@@ -314,9 +314,9 @@ function render() {
 }
 // Game loop
 let previousFrame = Date.now();
-
+// 
 function run() {
-	// Prevent the game from running too fast
+	// Prevent the game from running too fast (Date.now() - previous > 15 is approximately 60 frames per second)
 	if (Date.now() - previousFrame > 15) {
 		// Run physics
 		physics();
