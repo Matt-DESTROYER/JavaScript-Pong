@@ -190,10 +190,10 @@ function rectTouchingBall(x, y, w, h) {
 // Enemy AI
 function enemyAI() {
 	if (ball.dir.x > 0) {
-		if (ball.y > enemy.y + 25) {
-			moveEnemy(-3.25);
-		} else if (ball.y < enemy.y - 25) {
-			moveEnemy(3.25);
+		if (ball.y > enemy.y + 20) {
+			moveEnemy(-3.5);
+		} else if (ball.y < enemy.y - 20) {
+			moveEnemy(3.5);
 		}
 	}
 }
