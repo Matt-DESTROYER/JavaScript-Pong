@@ -284,7 +284,7 @@ function render() {
 	// Set fill colour to white
 	ctx.fillStyle = "white";
 	// Render ball
-	ctx.rect(ballX - ball.size, ballY - ball.size, 2 * ball.size, 2 * ball.size);
+	ctx.rect(ball.x - ball.size, ball.y - ball.size, 2 * ball.size, 2 * ball.size);
 	// Render player's paddle
 	ctx.rect(player.x - 15, player.y - 50, 30, 100);
 	// Render enemy's paddle
