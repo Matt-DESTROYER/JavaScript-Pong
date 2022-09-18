@@ -208,7 +208,7 @@ function physics() {
 		if (computer) {
 			enemyAI();
 		} else {
-			if (enemyDir !== 0) {
+			if (enemy.dir !== 0) {
 				moveEnemy(enemy.dir * 10);
 			}
 		}
@@ -223,7 +223,7 @@ function physics() {
 		// Bind paddle to borders
 		if (player.y + 50 > canvas.height) {
 			player.y = canvas.height - 50;
-		} else if (paddleY - 50 < 60) {
+		} else if (player.y - 50 < 60) {
 			player.y = 110;
 		}
 		// Bind enemy to borders
