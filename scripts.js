@@ -1,5 +1,5 @@
-// vs computer or another player
-let computer = window.confirm("Press 'Ok' to play against the computer. Press cancel to play against a friend.");
+// Check whether the player wants to vs the computer or another player
+const computer = window.confirm("Press 'Ok' to play against the computer. Press cancel to play against a friend.");
 if (computer) {
 	alert("Use the W and S keys or up and down arrow keys to move your paddle.");
 } else {
@@ -8,21 +8,37 @@ if (computer) {
 // Setup canvas
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+function resize() {
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
 // Setup variables
-let playerScore = 0, computerScore = 0;
 let level = 1;
-let ballX = Math.round(canvas.width / 2);
-let ballY = Math.round(canvas.height / 2);
-let ballSpeed = 0.75;
-let ballXdir, ballYdir;
-let paddleX = 75;
-let paddleY = Math.round(canvas.height / 2);
-let paddleDir = 0;
-let enemyX = canvas.width - 75;
-let enemyY = Math.round(canvas.height / 2);
-let enemyDir = 0;
+const player = {
+	score: 0,
+	x: 75,
+	y: Math.round(canvas.height / 2),
+	dir: 0
+};
+const enemy = {
+	score: 0,
+	x: canvas.width - 75,
+	y: Math.round(canvas.height / 2),
+	dir: 0,
+	aim: canvas.height / 2
+};
+const ball = {
+	x: Math.round(canvas.width / 2),
+	y: Math.round(canvas.height / 2),
+	size: 8,
+	dir: {
+		x: null,
+		y: null
+	},
+	speed: 3.75
+};
 // Setup font
 ctx.font = "20px Georgia";
 // Random number generation
@@ -30,160 +46,153 @@ function randomInt(min = 1, max = 100) {
 	return Math.floor(Math.random() * (max - min)) + min;
 }
 // Randomise ball position
-ballX += randomInt(-Math.round(canvas.width / 5), Math.round(canvas.width / 5));
-ballY += randomInt(-Math.round(canvas.height / 5), Math.round(canvas.height / 5));
+ball.x += randomInt(-Math.round(canvas.width / 5), Math.round(canvas.width / 5));
+ball.y += randomInt(-Math.round(canvas.height / 5), Math.round(canvas.height / 5));
 // Randomise ball direction
-ballXdir = randomInt(0, 1);
-if (ballXdir === 0) {
-	ballXdir = -1;
+ball.dir.x = randomInt(0, 1);
+if (ball.dir.x === 0) {
+	ball.dir.x = -1;
 }
-ballYdir = randomInt(0, 1);
-if (ballYdir === 0) {
-	ballYdir = -1;
+ball.dir.y = randomInt(0, 1);
+if (ball.dir.y === 0) {
+	ball.dir.y = -1;
 }
 // Function to reset variables
 function reset() {
-	ballX = Math.round(canvas.width / 2);
-	ballY = Math.round(canvas.height / 2);
-	paddleX = 75;
-	paddleY = Math.round(canvas.height / 2);
-	paddleDir = 0;
-	enemyX = canvas.width - 75;
-	enemyY = Math.round(canvas.height / 2);
-	enemyDir = 0;
-	enemyAimY = ballY;
-	ballX += randomInt(-Math.round(canvas.width / 4), Math.round(canvas.width / 4));
-	ballY += randomInt(-Math.round(canvas.height / 4), Math.round(canvas.height / 4));
-	ballXdir = randomInt(0, 1);
-	if (ballXdir === 0) {
-		ballXdir = -1;
-	}
-	ballYdir = randomInt(0, 1);
-	if (ballYdir === 0) {
-		ballYdir = -1;
-	}
+	ball.x = Math.round(canvas.width / 2);
+	ball.y = Math.round(canvas.height / 2);
+	player.x = 75;
+	player.y = Math.round(canvas.height / 2);
+	player.dir = 0;
+	enemy.x = canvas.width - 75;
+	enemy.y = Math.round(canvas.height / 2);
+	enemy.dir = 0;
+	enemy.aim = ballY;
+	ball.x += randomInt(-Math.round(canvas.width / 4), Math.round(canvas.width / 4));
+	ball.y += randomInt(-Math.round(canvas.height / 4), Math.round(canvas.height / 4));
+	// 0 evaluates to truthy and 1 evaluates to falsy
+	ball.dir.x = randomInt(0, 1) ? 1 : -1;
+	ballYdir = randomInt(0, 1) ? 1 : -1;
 }
 // Setup input
 if (computer) {
-	document.onkeydown = function(e) {
+	window.addEventListener("keydown", function (e) {
 		e = e || window.event;
-		switch (e.keyCode) {
+		switch (e.key.toString().toUpperCase()) {
 			// Up and down arrow keys
-			case 38:
-				paddleDir = 1;
+			case "ARROWUP":
+				player.dir = 1;
 				break;
-			case 40:
-				paddleDir = -1;
+			case "ARROWDOWN":
+				player.dir = -1;
 				break;
-				// W and S keys
-			case 87:
-				paddleDir = 1;
+			// W and S keys
+			case "W":
+				player.dir = 1;
 				break;
-			case 83:
-				paddleDir = -1;
+			case "S":
+				player.dir = -1;
 				break;
 		}
-	}
-	document.onkeyup = function(e) {
+	});
+	window.addEventListener("keyup", function (e) {
 		e = e || window.event;
-		switch (e.keyCode) {
+		switch (e.key.toString().toUpperCase()) {
 			// Up and down arrow keys
-			case 38:
-				if (paddleDir === 1) {
-					paddleDir = 0;
+			case "ARROWUP":
+				if (player.dir === 1) {
+					player.dir = 0;
 				}
 				break;
-			case 40:
-				if (paddleDir === -1) {
-					paddleDir = 0;
+			case "ARROWDOWN":
+				if (player.dir === -1) {
+					player.dir = 0;
 				}
 				break;
-				// W and S keys
-			case 87:
-				if (paddleDir === 1) {
-					paddleDir = 0;
+			// W and S keys
+			case "W":
+				if (player.dir === 1) {
+					player.dir = 0;
 				}
 				break;
-			case 83:
-				if (paddleDir === -1) {
-					paddleDir = 0;
+			case "S":
+				if (player.dir === -1) {
+					player.dir = 0;
 				}
 				break;
 		}
-	}
+	});
 } else {
-	document.onkeydown = function(e) {
+	window.addEventListener("keydown", function (e) {
 		e = e || window.event;
-		switch (e.keyCode) {
+		switch (e.key.toString().toUpperCase()) {
 			// Up and down arrow keys
-			case 38:
-				enemyDir = 1;
+			case "ARROWUP":
+				enemy.dir = 1;
 				break;
-			case 40:
-				enemyDir = -1;
+			case "ARROWDOWN":
+				enemy.dir = -1;
 				break;
-				// W and S keys
-			case 87:
-				paddleDir = 1;
+			// W and S keys
+			case "W":
+				player.dir = 1;
 				break;
-			case 83:
-				paddleDir = -1;
+			case "S":
+				player.dir = -1;
 				break;
 		}
-	}
-	document.onkeyup = function(e) {
+	});
+	window.addEventListener("keyup", function (e) {
 		e = e || window.event;
-		switch (e.keyCode) {
+		switch (e.key.toString().toUpperCase()) {
 			// Up and down arrow keys
-			case 38:
-				if (enemyDir === 1) {
-					enemyDir = 0;
+			case "ARROWUP":
+				if (enemy.dir === 1) {
+					enemy.dir = 0;
 				}
 				break;
-			case 40:
-				if (enemyDir === -1) {
-					enemyDir = 0;
+			case "ARROWDOWN":
+				if (enemy.dir === -1) {
+					enemy.dir = 0;
 				}
 				break;
-				// W and S keys
-			case 87:
-				if (paddleDir === 1) {
-					paddleDir = 0;
+			// W and S keys
+			case "W":
+				if (player.dir === 1) {
+					player.dir = 0;
 				}
 				break;
-			case 83:
-				if (paddleDir === -1) {
-					paddleDir = 0;
+			case "S":
+				if (player.dir === -1) {
+					player.dir = 0;
 				}
 				break;
 		}
-	}
+	});
 }
 // Move ball
-function moveBall(xDistance, yDistance) {
-	ballX += xDistance;
-	ballY -= yDistance;
+function moveBall(xDist, yDist) {
+	ball.x += xDist;
+	ball.y -= yDist;
 }
 // Move paddle
-function movePaddle(distance) {
-	paddleY -= distance;
+function movePaddle(dist) {
+	player.y -= dist;
 }
 // Move enemy
-function moveEnemy(distance) {
-	enemyY -= distance;
+function moveEnemy(dist) {
+	enemy.y -= dist;
 }
 // Detect if rectangle is touching ball
 function rectTouchingBall(x, y, w, h) {
-	const x2 = x + w,
-		y2 = y + h;
-	return ballX - 8 >= x && ballY - 8 >= y && ballX - 8 <= x2 && ballY - 8 <= y2 || ballX + 8 >= x && ballY - 8 >= y && ballX + 8 <= x2 && ballY - 8 <= y2 || ballX - 8 >= x && ballY + 8 >= y && ballX - 8 <= x2 && ballY + 8 <= y2 || ballX + 8 >= x && ballY + 8 >= y && ballX + 8 <= x2 && ballY + 8 <= y2;
+	return x <= ball.x + ball.size && x + w >= ball.x && y <= ball.y + ball.size && y + h >= ball.y;
 }
 // Enemy AI
 function enemyAI() {
-	if (ballXdir > 0) {
-		if (ballY > enemyY + 25) {
+	if (ball.dir.x > 0) {
+		if (ball.y > enemy.y + 25) {
 			moveEnemy(-3.25);
-		} else if (ballY < enemyY - 25) {
+		} else if (ball.y < enemy.y - 25) {
 			moveEnemy(3.25);
 		}
 	}
@@ -192,86 +201,67 @@ function enemyAI() {
 function physics() {
 	if (level !== "Game Over!") {
 		// Move paddle
-		if (paddleDir !== 0) {
-			movePaddle(paddleDir * 10);
+		if (player.dir !== 0) {
+			movePaddle(player.dir * 10);
 		}
 		// Move enemy
 		if (computer) {
 			enemyAI();
 		} else {
 			if (enemyDir !== 0) {
-				moveEnemy(enemyDir * 10);
+				moveEnemy(enemy.dir * 10);
 			}
 		}
 		// Move ball
-		moveBall(ballXdir * 5 * ballSpeed, ballYdir * 5 * ballSpeed);
+		moveBall(ball.dir.x * ball.speed, ball.dir.y * ball.speed);
 		// Ball collisions
-		if (rectTouchingBall(paddleX - 15, paddleY - 50, 30, 100)) {
-			if (ballXdir === 1) {
-				ballXdir = -1;
-			} else {
-				ballXdir = 1;
-			}
-		} else if (rectTouchingBall(enemyX - 15, enemyY - 50, 30, 100)) {
-			if (ballXdir === 1) {
-				ballXdir = -1;
-			} else {
-				ballXdir = 1;
-			}
+		if (rectTouchingBall(player.x - 15, player.y - 50, 30, 100)) {
+			ball.dir.x = -ball.dir.x;
+		} else if (rectTouchingBall(enemy.x - 15, enemy.y - 50, 30, 100)) {
+			ball.dir.x = -ball.dir.x;
 		}
 		// Bind paddle to borders
-		if (paddleY + 50 > canvas.height) {
-			paddleY = Math.round(canvas.height - 50);
+		if (player.y + 50 > canvas.height) {
+			player.y = canvas.height - 50;
 		} else if (paddleY - 50 < 60) {
-			paddleY = 110;
+			player.y = 110;
 		}
 		// Bind enemy to borders
-		if (enemyY + 50 > canvas.height) {
-			enemyY = Math.round(canvas.height - 50);
-		} else if (enemyY - 50 < 60) {
-			enemyY = 110;
+		if (enemy.y + 50 > canvas.height) {
+			enemy.y = canvas.height - 50;
+		} else if (enemy.y - 50 < 60) {
+			enemy.y = 110;
 		}
 		// Bind ball to borders
-		if (ballX - 8 < 0) {
-			ballX = 8;
-			if (ballXdir === 1) {
-				ballXdir = -1;
-			} else {
-				ballXdir = 1;
-			}
-			computerScore++;
+		if (ball.x - ball.size < 0) {
+			ball.x = ball.size;
+			ball.dir.x = -ball.dir.x;
+			enemy.score++;
 			reset();
-		} else if (ballX + 8 > Math.round(canvas.width)) {
-			ballX = Math.round(canvas.width - 8);
-			if (ballXdir === 1) {
-				ballXdir = -1;
+		} else if (ball.x + ball.size > canvas.width) {
+			ball.x = canvas.width - ball.size;
+			if (ball.dir.x === 1) {
+				ball.dir.x = -1;
 			} else {
-				ballXdir = 1;
+				ball.dir.x = 1;
 			}
-			playerScore++;
+			player.score++;
 			reset();
-		} else if (ballY - 8 < 60) {
-			ballY = 68;
-			if (ballYdir === 1) {
-				ballYdir = -1;
-			} else {
-				ballYdir = 1;
-			}
-		} else if (ballY + 8 > Math.round(canvas.height)) {
-			ballY = Math.round(canvas.height - 8);
-			if (ballYdir === 1) {
-				ballYdir = -1;
-			} else {
-				ballYdir = 1;
-			}
+		} else if (ball.y - ball.size < 60) {
+			ball.y = 60 + ball.size;
+			ball.dir.y = -ball.dir.y;
+		} else if (ball.y + ball.size > canvas.height) {
+			ball.y = canvas.height - ball.size;
+			ball.dir.y = -ball.dir.y;
 		}
 		// level
-		if (computer && playerScore >= 5) {
+		if (computer && player.score >= 5) {
 			level++;
-			playerScore = 0, computerScore = 0;
-			ballSpeed += 0.25;
+			player.score = 0;
+			enemy.score = 0;
+			ball.speed += 1.25;
 			reset();
-		} else if (computer && computerScore >= 5) {
+		} else if (computer && enemy.score >= 5) {
 			level = "Game Over!";
 		}
 	}
@@ -294,17 +284,13 @@ function render() {
 	// Set fill colour to white
 	ctx.fillStyle = "white";
 	// Render ball
-	ctx.rect(ballX - 8, ballY - 8, 16, 16);
+	ctx.rect(ballX - ball.size, ballY - ball.size, 2 * ball.size, 2 * ball.size);
 	// Render player's paddle
-	ctx.rect(paddleX - 15, paddleY - 50, 30, 100);
+	ctx.rect(player.x - 15, player.y - 50, 30, 100);
 	// Render enemy's paddle
-	ctx.rect(enemyX - 15, enemyY - 50, 30, 100);
+	ctx.rect(enemy.x - 15, enemy.y - 50, 30, 100);
 	// Render score counters
-	if (computer) {
-		ctx.fillText("Your score: " + playerScore + " Computer's score: " + computerScore, 10, 25);
-	} else {
-		ctx.fillText("Player 1's score: " + playerScore + " Player 2's score: " + computerScore, 10, 25);
-	}
+	ctx.fillText("Your score: " + player.score + (computer ? " Computer's score: " : " Player 2's score: ") + enemy.score, 10, 25);
 	ctx.fillText("Level: " + level, 10, 50);
 	// Fill shapes
 	ctx.fill();
