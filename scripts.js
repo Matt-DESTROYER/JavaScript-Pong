@@ -266,41 +266,34 @@ function physics() {
 		}
 	}
 }
-// Clear screen
-function clear(colour) {
-	ctx.beginPath();
-	ctx.fillStyle = colour;
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.rect(0, 0, canvas.width, canvas.height);
-	ctx.fill();
-	ctx.closePath();
-}
 // Render
 function render() {
 	// Clear screen (change black to whatever colour you prefer)
-	clear("black");
-	// Begin path
-	ctx.beginPath();
+	ctx.fillStyle = "black";
+	ctx.fillRect(0, 0, canvas.width, canvas.height);
 	// Set fill colour to white
 	ctx.fillStyle = "white";
+	// Begin path
+	ctx.beginPath();
 	// Render ball
 	ctx.rect(ball.x - ball.size, ball.y - ball.size, 2 * ball.size, 2 * ball.size);
 	// Render player's paddle
 	ctx.rect(player.x - 15, player.y - 50, 30, 100);
 	// Render enemy's paddle
 	ctx.rect(enemy.x - 15, enemy.y - 50, 30, 100);
-	// Render score counters
-	ctx.fillText("Your score: " + player.score + (computer ? " Computer's score: " : " Player 2's score: ") + enemy.score, 10, 25);
-	ctx.fillText("Level: " + level, 10, 50);
-	// Fill shapes
-	ctx.fill();
 	// Close path
 	ctx.closePath();
+	// Fill shapes
+	ctx.fill();
+	// Render score counters
+	ctx.fillText("Your score: " + player.score + (computer ? " Computer's score: " : " Player 2's score: ") + enemy.score, 10, 25);
+	// Render level
+	ctx.fillText("Level: " + level, 10, 50);
 }
 // Game loop
 let previousFrame = Date.now();
-// 
-function run() {
+// Main function
+function main() {
 	// Prevent the game from running too fast (Date.now() - previous > 15 is approximately 60 frames per second)
 	if (Date.now() - previousFrame > 15) {
 		// Run physics
@@ -311,7 +304,7 @@ function run() {
 		previousFrame = Date.now();
 	}
 	// Repeat
-	window.requestAnimationFrame(run);
+	window.requestAnimationFrame(main);
 }
-// Run game
-run();
+// Start/run the game
+main();
