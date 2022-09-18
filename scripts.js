@@ -72,7 +72,7 @@ function reset() {
 	ball.y += randomInt(-Math.round(canvas.height / 4), Math.round(canvas.height / 4));
 	// 0 evaluates to truthy and 1 evaluates to falsy
 	ball.dir.x = randomInt(0, 1) ? 1 : -1;
-	ballYdir = randomInt(0, 1) ? 1 : -1;
+	ball.dir.y = randomInt(0, 1) ? 1 : -1;
 }
 // Setup input
 if (computer) {
