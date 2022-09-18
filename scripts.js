@@ -64,12 +64,12 @@ function reset() {
 	player.x = 75;
 	player.y = Math.round(canvas.height / 2);
 	player.dir = 0;
+	ball.x += randomInt(-Math.round(canvas.width / 4), Math.round(canvas.width / 4));
+	ball.y += randomInt(-Math.round(canvas.height / 4), Math.round(canvas.height / 4));
 	enemy.x = canvas.width - 75;
 	enemy.y = Math.round(canvas.height / 2);
 	enemy.dir = 0;
-	enemy.aim = ballY;
-	ball.x += randomInt(-Math.round(canvas.width / 4), Math.round(canvas.width / 4));
-	ball.y += randomInt(-Math.round(canvas.height / 4), Math.round(canvas.height / 4));
+	enemy.aim = ball.y;
 	// 0 evaluates to truthy and 1 evaluates to falsy
 	ball.dir.x = randomInt(0, 1) ? 1 : -1;
 	ball.dir.y = randomInt(0, 1) ? 1 : -1;
