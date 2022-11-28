@@ -216,9 +216,9 @@ function physics() {
 		moveBall(ball.dir.x * ball.speed, ball.dir.y * ball.speed);
 		// Ball collisions
 		if (rectTouchingBall(player.x - 15, player.y - 50, 30, 100)) {
-			ball.dir.x = -ball.dir.x;
+			ball.dir.x = Math.abs(ball.dir.x);
 		} else if (rectTouchingBall(enemy.x - 15, enemy.y - 50, 30, 100)) {
-			ball.dir.x = -ball.dir.x;
+			ball.dir.x = -Math.abs(ball.dir.x);
 		}
 		// Bind paddle to borders
 		if (player.y + 50 > canvas.height) {
